@@ -1,30 +1,35 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+require("dotenv").config(); // Ensure this is at the top
 const connectDB = require("./config/db");
 const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const app = express();
 
+// Debugging to check if environment variables are loaded
+console.log('FRONTEND_URLS:', process.env.FRONTEND_URLS);
+
+const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',') : [];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: function (origin, callback) {
+      // Allow requests with no origin, like mobile apps or curl requests
+      if (!origin) return callback(null, true);
+      // Check if the request origin is in the allowedOrigins array
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use("/api", router);
 app.use(cookieParser());
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-//   res.header("Access-Control-Allow-Credentials", "true");
-//   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   next();
-// });
 
 const PORT = process.env.PORT || 8000;
 
