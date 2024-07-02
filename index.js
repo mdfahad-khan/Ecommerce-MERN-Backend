@@ -26,22 +26,22 @@ app.use(
       }
       return callback(null, true);
     },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true, // Allows credentials (cookies, authorization headers)
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   })
 );
 
 app.use(express.json());
-app.use("/api", router);
-app.use(cookieParser());
+app.use("/api", router); // Mount your API routes
+app.use(cookieParser()); // Use cookie parser middleware
 
 const PORT = process.env.PORT || 8000;
 
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log("connected to db");
-      console.log(`server listening on port ${PORT}`);
+      console.log("Connected to database.");
+      console.log(`Server listening on port ${PORT}`);
     });
   })
   .catch((error) => {
