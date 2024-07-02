@@ -7,22 +7,10 @@ const cookieParser = require("cookie-parser");
 const app = express();
 
 // Debugging to check if environment variables are loaded
-console.log('FRONTEND_URLS:', process.env.FRONTEND_URLS);
-
-const allowedOrigins = process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(',') : [];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin, like mobile apps or curl requests
-      if (!origin) return callback(null, true);
-      // Check if the request origin is in the allowedOrigins array
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = 'The CORS policy for this site does not allow access from the specified origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
+    origin: "https://ecommerce-mern-lovat-xi.vercel.app/",
     credentials: true,
   })
 );
