@@ -6,14 +6,22 @@ const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const app = express();
 
-// Debugging to check if environment variables are loaded
+// Parse FRONTEND_URLS from environment variable
+const FRONTEND_URLS = process.env.FRONTEND_URLS.split(",");
 
-app.use(
-  cors({
-    origin: "https://ecommerce-mern-lovat-xi.vercel.app/",
-    credentials: true,
-  })
-);
+// Configure CORS options
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (FRONTEND_URLS.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use("/api", router);
