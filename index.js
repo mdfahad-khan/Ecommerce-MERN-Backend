@@ -6,24 +6,29 @@ const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const app = express();
 
-// Parse FRONTEND_URLS from environment variable
-const FRONTEND_URLS = process.env.FRONTEND_URLS.split(",");
+// Debugging to check if environment variables are loaded
+console.log("FRONTEND_URLS:", process.env.FRONTEND_URLS);
 
-// Configure CORS options
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (FRONTEND_URLS.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
+const allowedOrigins = process.env.FRONTEND_URLS
+  ? process.env.FRONTEND_URLS.split(",")
+  : [];
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin, like mobile apps or curl requests
+      if (!origin) return callback(null, true);
+      // Check if the request origin is in the allowedOrigins array
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use("/api", router);
