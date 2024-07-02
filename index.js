@@ -13,11 +13,6 @@ const allowedOrigins = process.env.FRONTEND_URLS
   ? process.env.FRONTEND_URLS.split(",")
   : [];
 
-app.use((req, res, next) => {
-  console.log(`Request from origin: ${req.headers.origin}`);
-  next();
-});
-
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -34,8 +29,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.options("*", cors()); // Enable pre-flight across-the-board
 
 app.use(express.json());
 app.use("/api", router);
