@@ -11,19 +11,18 @@ async function authToken(req, res, next) {
       : null;
 
     if (!token) {
+      console.log("No token found in request cookies");
       return res.status(200).json({
         message: "Please Login......",
         error: true,
         success: false,
       });
     }
+    console.log("Token received: ", token);
 
-    jwt.verify(token, process.env.TOKEN_SECRET_KEY, function (err, decoded) {
-      console.log(err);
-      console.log("decoded:", decoded);
-
+    jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err, decoded) => {
       if (err) {
-        console.log("error auth", err);
+        console.log("Token verification failed:", err);
         return res.status(401).json({
           message: "Unauthorized",
           error: true,
@@ -31,12 +30,11 @@ async function authToken(req, res, next) {
         });
       }
 
-      req.userId = decoded?._id;
+      req.userId = decoded._id;
       next();
     });
-
-    console.log("token - ", token);
   } catch (err) {
+    console.log("Error in authToken middleware:", err);
     res.status(400).json({
       message: err.message || err,
       data: [],
