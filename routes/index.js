@@ -24,6 +24,7 @@ const deleteAddToCartProduct = require("../controller/user/deleteAddToCartProduc
 const searchProduct = require("../controller/product/searchProduct");
 const filterProductController = require("../controller/product/filterProduct");
 const paymentController = require("../controller/order/paymentController");
+const { googleSignInController } = require("../controller/user/gogole");
 
 router.post("/signup", userSignUpController);
 router.post("/signin", userSignInController);
@@ -48,5 +49,6 @@ router.post("/delete-cart-product", authToken, deleteAddToCartProduct);
 router.get("/search", searchProduct);
 router.post("/filter-product", filterProductController);
 router.post("/checkout", authToken, paymentController);
+router.post("/google", googleSignInController);
 
 module.exports = router;
